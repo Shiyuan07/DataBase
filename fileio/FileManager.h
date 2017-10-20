@@ -118,7 +118,16 @@ public:
 		_openFile(name, fileID);
 		return true;
 	}
-	int newType() {
+    /*
+     * new function
+     */
+    bool destroyFile(const char *name) {
+        string command = "rm " + string(name);
+        system(command.c_str());
+        return true;
+    }
+    
+    int newType() {
 		int t = tm->findLeftOne();
 		tm->setBit(t, 0);
 		return t;

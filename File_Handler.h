@@ -9,21 +9,22 @@
 #ifndef File_Manager_hpp
 #define File_Manager_hpp
 
+#include "Records_Manager.h"
 #include "fileio/FileManager.h"
 #include "bufmanager/BufPageManager.h"
 
-class File_Manager {
+class File_Handler {
 private:
     BufPageManager *mBufPageManager;
     FileManager *mFileManager;
 public:
-    RM_Manager(FileManager *fm, BufPageManager *bpm);
-    ~RM_Manager();
+    File_Handler(FileManager *fm, BufPageManager *bpm);
+    ~File_Handler();
     
     bool createFile(const char *fileName, int recordSize);
     bool destroyFile(const char *fileName);
-    bool openFile(const char *fileName, RM_FileHandle *&fileHandle);
-    bool closeFile(RM_FileHandle *fileHandle);
+    bool openFile(const char *fileName, Records_Manager *&records_M);
+    bool closeFile(Records_Manager *records_M);
 };
 
 

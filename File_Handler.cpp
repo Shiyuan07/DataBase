@@ -6,20 +6,20 @@
 //  Copyright © 2017年 王诗媛. All rights reserved.
 //
 
-#include "File_Manager.h"
+#include "File_Handler.h"
 
 #include "utils/pagedef.h"
 
-RM_Manager::RM_Manager(FileManager *fm, BufPageManager *bpm) {
+File_Handler::File_Handler(FileManager *fm, BufPageManager *bpm) {
     mFileManager = fm;
     mBufPageManager = bpm;
 }
 
-RM_Manager::~RM_Manager() {
+File_Handler::~File_Handler() {
     
 }
 
-bool RM_Manager::createFile(const char *fileName, int recordSize) {
+bool File_Handler::createFile(const char *fileName, int recordSize) {
     if (recordSize > PAGE_SIZE) {
         return false;
     }
@@ -43,23 +43,23 @@ bool RM_Manager::createFile(const char *fileName, int recordSize) {
     return true;
 }
 
-bool RM_Manager::destroyFile(const char *fileName) {
+bool File_Handler::destroyFile(const char *fileName) {
     return mFileManager->destroyFile(fileName);
 }
 
-bool RM_Manager::openFile(const char *fileName, RM_FileHandle *&fileHandle) {
+bool File_Handler::openFile(const char *fileName, Records_Manager *&records_M) {
     int fileID;
     bool flag = mFileManager->openFile(fileName, fileID);
     if (!flag) {
         return false;
     }
-    fileHandle = new RM_FileHandle(mBufPageManager, fileID);
+    records_M = new Records_Manager(mBufPageManager, fileID);
     return true;
 }
 
-bool RM_Manager::closeFile(RM_FileHandle *fileHandle) {
-    int fileID = fileHandle->getFileID();
+bool File_Handler::closeFile(Records_Manager *records_M) {
+    int fileID = records_M->getFileID();
     mBufPageManager->close();
-    delete fileHandle;
+    delete records_M;
     return mFileManager->closeFile(fileID);
 }
