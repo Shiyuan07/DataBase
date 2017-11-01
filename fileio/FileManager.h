@@ -7,6 +7,8 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <cstdlib>
+#include "../utils/MyBitMap.h"
 //#include "../MyLinkList.h"
 using namespace std;
 class FileManager {
@@ -126,7 +128,7 @@ public:
         system(command.c_str());
         return true;
     }
-    
+
     int newType() {
 		int t = tm->findLeftOne();
 		tm->setBit(t, 0);
