@@ -2,7 +2,7 @@
 #define IndexHandle_h
 
 #include "Record.h"
-#include "info.h"
+#include "utils/base.h"
 #include "fileio/FileManager.h"
 #include "bufmanager/BufPageManager.h"
 
@@ -59,7 +59,8 @@ class IndexHandle {
         float data2 = *((int*)cmpData);
         return data1 <= data2;
       }
-      else if(mTreeHeader->attrType == CHAR) {
+      else{
+          //if(mTreeHeader->attrType == CHAR) {
     		char* data1 = new char[mTreeHeader->attrLength + 1];
     		memcpy(data1, pData, mTreeHeader->attrLength);
     		data1[mTreeHeader->attrLength] = 0;
@@ -83,7 +84,7 @@ class IndexHandle {
         float data2 = *((int*)cmpData);
         return data1 == data2;
       }
-      else if(mTreeHeader->attrType == CHAR) {
+      else /*if(mTreeHeader->attrType == CHAR)*/ {
     		char* data1 = new char[mTreeHeader->attrLength + 1];
     		memcpy(data1, pData, mTreeHeader->attrLength);
     		data1[mTreeHeader->attrLength] = 0;
