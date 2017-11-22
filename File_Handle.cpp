@@ -1,21 +1,13 @@
-//
-//  Records_Manager.cpp
-//  DataBase
-//
-//  Created by 王诗媛 on 2017/10/18.
-//  Copyright © 2017年 王诗媛. All rights reserved.
-//
-
 #include <vector>
 #include <memory>
 #include <cstdio>
 #include <cassert>
 
-#include "Records_Manager.h"
+#include "File_Handle.h"
 
 using namespace std;
 
-Records_Manager::Records_Manager(BufPageManager *bpm, int fileID) {
+File_Handle::File_Handle(BufPageManager *bpm, int fileID) {
     mBufPageManager = bpm;
     mFileID = fileID;
     mModified = false;
@@ -37,14 +29,14 @@ Records_Manager::Records_Manager(BufPageManager *bpm, int fileID) {
     mBufPageManager->release(index);
 }
 
-Records_Manager::~Records_Manager() {
+File_Handle::~File_Handle() {
     if (mModified) {
         writeBackHeaderPage();
     }
     mBufPageManager->close();
 }
 
-RID Records_Manager::getNewRid() {
+RID File_Handle::getNewRid() {
     int pageID = -1, slotID = -1;
     //fprintf(stdout, "PageNum = %d\n", mPageNum);
     for (int i = 1; i < mPageNum; ++i) {
@@ -77,7 +69,7 @@ RID Records_Manager::getNewRid() {
     return RID(mFileID, pageID, slotID);
 }
 
-void Records_Manager::initPage(int pageID) {
+void File_Handle::initPage(int pageID) {
     int index;
     BufType uData = mBufPageManager->getPage(mFileID, pageID, index);
     char *data = (char *)uData;
@@ -85,7 +77,7 @@ void Records_Manager::initPage(int pageID) {
     mBufPageManager->markDirty(index);
 }
 
-void Records_Manager::writeBackHeaderPage() {
+void File_Handle::writeBackHeaderPage() {
     int index;
     BufType uData = mBufPageManager->allocPage(mFileID, 0, index, false);
     uData[0] = mRecordSize;
@@ -103,7 +95,7 @@ void Records_Manager::writeBackHeaderPage() {
     mBufPageManager->writeBack(index);
 }
 
-void Records_Manager::checkPageAvailable(int pageID) {
+void File_Handle::checkPageAvailable(int pageID) {
     int index;
     BufType uData = mBufPageManager->getPage(mFileID, pageID, index);
     char *data = (char *)uData;
@@ -120,15 +112,15 @@ void Records_Manager::checkPageAvailable(int pageID) {
     }
 }
 
-int Records_Manager::getFileID() const {
+int File_Handle::getFileID() const {
     return mFileID;
 }
 
-int Records_Manager::getPageNum() const {
+int File_Handle::getPageNum() const {
     return mPageNum;
 }
 
-bool Records_Manager::getAllRecFromPage(int pageID, vector<shared_ptr<Record> > &recordVector) {
+bool File_Handle::getAllRecFromPage(int pageID, vector<shared_ptr<Record> > &recordVector) {
     assert(pageID > 0);
     int index;
     BufType uData = mBufPageManager->getPage(mFileID, pageID, index);
@@ -145,7 +137,7 @@ bool Records_Manager::getAllRecFromPage(int pageID, vector<shared_ptr<Record> > 
     return true;
 }
 
-bool Records_Manager::getRec(const RID &rid, Record &rec) const {
+bool File_Handle::getRec(const RID &rid, Record &rec) const {
     int fileID, pageID, slotID;
     if (!rid.getAll(fileID, pageID, slotID)) {
         return false;
@@ -161,7 +153,7 @@ bool Records_Manager::getRec(const RID &rid, Record &rec) const {
     return true;
 }
 
-bool Records_Manager::insertRec(const char *pData, RID &rid) {
+bool File_Handle::insertRec(const char *pData, RID &rid) {
     rid = getNewRid();
     int fileID, pageID, slotID;
     if (!rid.getAll(fileID, pageID, slotID)) {
@@ -179,7 +171,7 @@ bool Records_Manager::insertRec(const char *pData, RID &rid) {
     return true;
 }
 
-bool Records_Manager::deleteRec(const RID &rid) {
+bool File_Handle::deleteRec(const RID &rid) {
     int fileID, pageID, slotID;
     if (!rid.getAll(fileID, pageID, slotID)) {
         return false;
@@ -193,7 +185,7 @@ bool Records_Manager::deleteRec(const RID &rid) {
     return true;
 }
 
-bool Records_Manager::updateRec(const Record &rec) {
+bool File_Handle::updateRec(const Record &rec) {
     RID rid = rec.getRid();
     int fileID, pageID, slotID;
     if (!rid.getAll(fileID, pageID, slotID)) {
@@ -208,7 +200,7 @@ bool Records_Manager::updateRec(const Record &rec) {
     return true;
 }
 
-bool Records_Manager::forcePage(int pageID) const {
+bool File_Handle::forcePage(int pageID) const {
     int index = -1;
     mBufPageManager->getPage(mFileID, pageID, index);
     if (index == -1) {

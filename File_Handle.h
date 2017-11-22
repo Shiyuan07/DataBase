@@ -1,16 +1,13 @@
 //
-//  Records_Manager.hpp
+//  File_Manager.hpp
 //  DataBase
 //
-//  Created by 王诗媛 on 2017/10/18.
+//  Created by 王诗媛 on 2017/10/20.
 //  Copyright © 2017年 王诗媛. All rights reserved.
 //
 
-#ifndef Records_Manager_hpp
-#define Records_Manager_hpp
-
-#ifndef __RM_FILE_HANDLE_H__
-#define __RM_FILE_HANDLE_H__
+#ifndef __FILE_HANDLE_H__
+#define __FILE_HANDLE_H__
 
 #include <vector>
 #include <memory>
@@ -20,7 +17,7 @@
 #include "utils/pagedef.h"
 #include "bufmanager/BufPageManager.h"
 
-class Records_Manager {
+class File_Handle {
 private:
     bool mModified;
     int mFileID;
@@ -38,8 +35,8 @@ private:
     void checkPageAvailable(int pageID);
     
 public:
-    Records_Manager(BufPageManager *bpm, int fileID);
-    ~Records_Manager();
+    File_Handle(BufPageManager *bpm, int fileID);
+    ~File_Handle();
     
     bool getRec(const RID &rid, Record &rec) const;
     bool insertRec(const char *pData, RID &rid);
@@ -52,5 +49,4 @@ public:
     bool getAllRecFromPage(int pageID, vector<shared_ptr<Record> > &recordVector);
 };
 
-#endif // __RM_FILE_HANDLE_H__
-#endif /* Records_Manager_hpp */
+#endif // __FILE_HANDLE_H__
